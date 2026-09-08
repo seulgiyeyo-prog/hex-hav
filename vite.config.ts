@@ -6,7 +6,19 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     base: './',
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'clean-html-plugin',
+        transformIndexHtml(html, ctx) {
+          if (ctx.bundle) {
+            return html.replace(/<!-- GITHUB_PAGES_REDIRECT_START -->[\s\S]*?<!-- GITHUB_PAGES_REDIRECT_END -->/, '');
+          }
+          return html;
+        },
+      },
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
