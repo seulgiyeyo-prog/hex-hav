@@ -129,8 +129,61 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             : '빨강(2P 후공) 승리!'}
         </h3>
 
+        {/* Win Condition Highlight Badge */}
+        {gameType === 'HAVANNAH' && winResult.winType && (
+          <div className="mt-4 mb-3 mx-auto p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50/70 border-2 border-amber-300 shadow-xs text-center">
+            <div className="text-[11px] font-black uppercase tracking-wider text-amber-800 flex items-center justify-center gap-1.5 mb-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>하반나 달성 승리 형태</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            </div>
+
+            <div className="text-2xl sm:text-3xl font-black text-slate-900 flex items-center justify-center gap-2">
+              {winResult.winType === 'RING' && (
+                <>
+                  <span className="text-3xl sm:text-4xl animate-bounce">⭕</span>
+                  <span className="text-emerald-700">고리 (Ring / 폐곡선)</span>
+                </>
+              )}
+              {winResult.winType === 'BRIDGE' && (
+                <>
+                  <span className="text-3xl sm:text-4xl animate-bounce">🌉</span>
+                  <span className="text-indigo-700">다리 (Bridge / 모서리 연결)</span>
+                </>
+              )}
+              {winResult.winType === 'FORK' && (
+                <>
+                  <span className="text-3xl sm:text-4xl animate-bounce">🔱</span>
+                  <span className="text-rose-700">포크 (Fork / 세 변 연결)</span>
+                </>
+              )}
+            </div>
+
+            <p className="text-xs sm:text-sm font-bold text-slate-700 mt-2 px-1">
+              {winResult.winType === 'RING' && '보드 위의 칸을 완전히 에워싸는 폐곡선(요르단 루프)을 완성하여 승리했습니다!'}
+              {winResult.winType === 'BRIDGE' && '보드의 서로 다른 2개 이상의 꼭짓점(코너)을 직접 연결하는 다리를 놓아 승리했습니다!'}
+              {winResult.winType === 'FORK' && '보드의 서로 다른 3개 이상의 변(모서리)을 동시에 잇는 삼차로(포크)를 놓아 승리했습니다!'}
+            </p>
+          </div>
+        )}
+
+        {gameType === 'HEX' && (
+          <div className="mt-4 mb-3 mx-auto p-3.5 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50/70 border-2 border-indigo-200 shadow-xs text-center">
+            <div className="text-[11px] font-black uppercase tracking-wider text-indigo-700 mb-1">
+              HEX 달성 승리 형태
+            </div>
+            <div className="text-xl sm:text-2xl font-black text-indigo-950 flex items-center justify-center gap-2">
+              <span className="text-2xl">⚡</span>
+              <span>양대 변 연결 (Topological Connection)</span>
+            </div>
+            <p className="text-xs font-bold text-slate-700 mt-1">
+              {isP1 ? '북쪽과 남쪽 변을 빈틈없이 잇는 파랑 통로 완성!' : '동쪽과 서쪽 변을 빈틈없이 잇는 빨강 통로 완성!'}
+            </p>
+          </div>
+        )}
+
         {/* Reason Description */}
-        <p className="text-sm md:text-base font-semibold text-slate-700 mt-2 px-2">
+        <p className="text-sm md:text-base font-semibold text-slate-700 mt-1 px-2">
           {winResult.description}
         </p>
 

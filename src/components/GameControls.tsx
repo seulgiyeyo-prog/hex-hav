@@ -1,8 +1,8 @@
 import React from 'react';
-import { GameType, GameMode, Player, AIDifficulty, HintAnalysis } from '../types';
+import { GameType, GameMode, Player, AIDifficulty, HintAnalysis, WinResult } from '../types';
 import { HEX_SIZES } from '../utils/hexLogic';
 import { HAVANNAH_SIZES, formatHavannahKey } from '../utils/havannahLogic';
-import { RotateCcw, Lightbulb, RefreshCw, Hash, Compass, ArrowRightLeft, Sparkles, User, Bot, AlertTriangle } from 'lucide-react';
+import { RotateCcw, Lightbulb, RefreshCw, Hash, Compass, ArrowRightLeft, Sparkles, User, Bot, AlertTriangle, Trophy } from 'lucide-react';
 
 interface GameControlsProps {
   gameType: GameType;
@@ -18,6 +18,8 @@ interface GameControlsProps {
   showMoveNumbers: boolean;
   showCoordinates: boolean;
   pieRuleAvailable: boolean;
+  winResult?: WinResult | null;
+  onOpenVictoryDetails?: () => void;
   onSizeChange: (size: number) => void;
   onDifficultyChange: (diff: AIDifficulty) => void;
   onAiPlayerChange: (p: Player) => void;
@@ -43,6 +45,8 @@ export const GameControls: React.FC<GameControlsProps> = ({
   showMoveNumbers,
   showCoordinates,
   pieRuleAvailable,
+  winResult,
+  onOpenVictoryDetails,
   onSizeChange,
   onDifficultyChange,
   onAiPlayerChange,
@@ -74,51 +78,114 @@ export const GameControls: React.FC<GameControlsProps> = ({
 
   return (
     <div className="w-full flex flex-col gap-3">
-      {/* Current Turn & Player Status Bar */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        {/* Turn indicator card */}
-        <div className="flex items-center gap-3">
-          <div
-            className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-white shadow-xs shrink-0 transition-transform ${
-              isP1
-                ? 'bg-gradient-to-tr from-blue-600 to-indigo-600'
-                : 'bg-gradient-to-tr from-red-600 to-rose-600'
-            }`}
-          >
-            {isAiTurn ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-              <span
-                className={`text-xs font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${
-                  isP1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-                }`}
-              >
-                {isP1 ? '1P 파랑 (선공)' : '2P 빨강 (후공)'}
-              </span>
-              <span className="text-xs text-slate-400 font-medium whitespace-nowrap">제 {moveCount + 1}수 진행 중</span>
+      {/* Current Turn & Player Status Bar or Victory Status */}
+      <div
+        className={`rounded-2xl p-4 border shadow-xs flex flex-wrap items-center justify-between gap-3 transition-colors ${
+          winResult
+            ? 'bg-gradient-to-r from-amber-500/10 via-yellow-50 to-amber-500/10 border-amber-300'
+            : 'bg-white border-slate-200'
+        }`}
+      >
+        {winResult ? (
+          /* Victory Indicator in Status Bar */
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-white shadow-xs shrink-0 ${
+                winResult.winner === 1
+                  ? 'bg-gradient-to-tr from-blue-600 to-indigo-600'
+                  : 'bg-gradient-to-tr from-red-600 to-rose-600'
+              }`}
+            >
+              <Trophy className="w-5 h-5 text-yellow-300" />
             </div>
-            <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-0.5 flex items-center gap-1.5 whitespace-nowrap">
-              {isAiTurn ? (
-                <span className="text-indigo-600 flex items-center gap-1.5 animate-pulse">
-                  AI가 수학적 최적수를 계산 중...
+
+            <div>
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                <span
+                  className={`text-xs font-black px-2.5 py-0.5 rounded-full whitespace-nowrap ${
+                    winResult.winner === 1 ? 'bg-blue-600 text-white' : 'bg-red-600 text-white'
+                  }`}
+                >
+                  {winResult.winner === 1 ? '1P 파랑 승리!' : '2P 빨강 승리!'}
                 </span>
-              ) : (
-                <span>
-                  {gameMode === 'AI'
-                    ? '플레이어 착수 차례'
-                    : isP1
-                    ? '1P(파랑) 착수 차례'
-                    : '2P(빨강) 착수 차례'}
-                </span>
-              )}
+
+                {gameType === 'HAVANNAH' && winResult.winType && (
+                  <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-950 border border-amber-300 whitespace-nowrap">
+                    {winResult.winType === 'RING' && '⭕ 승리 조건: 고리 (Ring)'}
+                    {winResult.winType === 'BRIDGE' && '🌉 승리 조건: 다리 (Bridge)'}
+                    {winResult.winType === 'FORK' && '🔱 승리 조건: 포크 (Fork)'}
+                  </span>
+                )}
+
+                {gameType === 'HEX' && (
+                  <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200 whitespace-nowrap">
+                    ⚡ 승리 조건: 대변 연결
+                  </span>
+                )}
+              </div>
+
+              <div className="text-sm sm:text-base font-black text-slate-900 mt-1 flex items-center gap-1.5 whitespace-nowrap">
+                {gameType === 'HAVANNAH' && winResult.winType === 'RING' && '【고리 (Ring)】 완성으로 승리!'}
+                {gameType === 'HAVANNAH' && winResult.winType === 'BRIDGE' && '【다리 (Bridge)】 완성으로 승리!'}
+                {gameType === 'HAVANNAH' && winResult.winType === 'FORK' && '【포크 (Fork)】 완성으로 승리!'}
+                {gameType === 'HEX' && '양변을 잇는 위상 연결로 승리!'}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Normal Turn indicator card */
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-white shadow-xs shrink-0 transition-transform ${
+                isP1
+                  ? 'bg-gradient-to-tr from-blue-600 to-indigo-600'
+                  : 'bg-gradient-to-tr from-red-600 to-rose-600'
+              }`}
+            >
+              {isAiTurn ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
+            </div>
 
-        {/* Quick Actions (Hint, Undo, Reset) */}
+            <div>
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                <span
+                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${
+                    isP1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                  }`}
+                >
+                  {isP1 ? '1P 파랑 (선공)' : '2P 빨강 (후공)'}
+                </span>
+                <span className="text-xs text-slate-400 font-medium whitespace-nowrap">제 {moveCount + 1}수 진행 중</span>
+              </div>
+              <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-0.5 flex items-center gap-1.5 whitespace-nowrap">
+                {isAiTurn ? (
+                  <span className="text-indigo-600 flex items-center gap-1.5 animate-pulse">
+                    AI가 수학적 최적수를 계산 중...
+                  </span>
+                ) : (
+                  <span>
+                    {gameMode === 'AI'
+                      ? '플레이어 착수 차례'
+                      : isP1
+                      ? '1P(파랑) 착수 차례'
+                      : '2P(빨강) 착수 차례'}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Quick Actions (Hint, Undo, Reset, Victory Details) */}
         <div className="flex items-center flex-wrap gap-2 shrink-0">
+          {winResult && onOpenVictoryDetails && (
+            <button
+              id="btn-victory-details"
+              onClick={onOpenVictoryDetails}
+              className="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition-colors shrink-0 cursor-pointer"
+            >
+              승리 분석 보기
+            </button>
+          )}
           {/* Hint Button */}
           <button
             id="btn-hint"

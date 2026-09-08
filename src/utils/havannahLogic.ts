@@ -197,31 +197,29 @@ function checkPlayerHavannahWin(
     }
   }
 
-  // Check each component for Bridge, Fork, and Ring
+  // Check each component for Ring, Fork, and Bridge
   for (const comp of components) {
     const compSet = new Set(comp);
 
-    // 1. Check Bridge (Connects 2 or more distinct corners)
-    const cornersInComp = new Set<number>();
-    for (const key of comp) {
-      const meta = boardMeta.get(key);
-      if (meta && meta.type === 'CORNER' && meta.cornerIndex !== undefined) {
-        cornersInComp.add(meta.cornerIndex);
+    // 1. Check Ring (고리 / 폐곡선 - 하반나의 대표 승리 조건)
+    // Flood fill from outside the board through all board cells not in compSet.
+    // Any cell on the board not reached by outside flood-fill is enclosed!
+    if (comp.length >= 6) { // Minimum loop length on hex grid is 6
+      const trapped = findEnclosedCells(compSet, boardMeta, size);
+      if (trapped.length > 0) {
+        return {
+          winner: player,
+          winningKeys: comp,
+          winType: 'RING',
+          enclosedKeys: trapped,
+          description: `${player === 1 ? '파랑(1P 선공)' : '빨강(2P 후공)'} 플레이어가 ${trapped.length}개의 칸을 완전히 둘러싸는 【고리(Ring)】를 완성했습니다!`,
+          mathInsight:
+            '【고리(Ring)의 위상수학: 요르단 폐곡선 정리】 평면 위의 닫힌 연속 루프는 평면을 내부(Interior)와 외부(Exterior)의 독립된 두 영역으로 명확히 분할합니다.',
+        };
       }
     }
-    if (cornersInComp.size >= 2) {
-      const cornerNames = Array.from(cornersInComp).map((idx) => `${idx + 1}번 꼭짓점`).join(', ');
-      return {
-        winner: player,
-        winningKeys: comp,
-        winType: 'BRIDGE',
-        description: `${player === 1 ? '파랑' : '빨강'} 플레이어가 서로 다른 모서리(${cornerNames})를 연결하는 '다리(Bridge)'를 완성했습니다!`,
-        mathInsight:
-          '【다리(Bridge)의 위상수학】 6개의 꼭짓점 중 2개 이상을 연결하는 최단 연결망(Spanning path)입니다. 그래프 이론에서 두 단일 소스 간의 위상적 연결 통로를 형성합니다.',
-      };
-    }
 
-    // 2. Check Fork (Connects 3 or more distinct edges)
+    // 2. Check Fork (포크 / 삼차로 - 3개 이상의 서로 다른 변 연결)
     const edgesInComp = new Set<number>();
     for (const key of comp) {
       const meta = boardMeta.get(key);
@@ -235,28 +233,30 @@ function checkPlayerHavannahWin(
         winner: player,
         winningKeys: comp,
         winType: 'FORK',
-        description: `${player === 1 ? '파랑' : '빨강'} 플레이어가 3개의 서로 다른 변(${edgeNames})을 잇는 '포크(Fork/삼차로)'를 완성했습니다!`,
+        description: `${player === 1 ? '파랑(1P 선공)' : '빨강(2P 후공)'} 플레이어가 3개의 서로 다른 변(${edgeNames})을 연결하는 【포크(Fork)】를 완성했습니다!`,
         mathInsight:
-          '【포크(Fork)의 삼각 분기】 3개의 서로 다른 모서리 경계를 잇는 구조는 평면을 최소 3개 영역으로 분할하는 위상학적 삼차로(3-Way Junction)를 증명합니다.',
+          '【포크(Fork)의 삼각 분기】 3개의 서로 다른 외곽 경계를 잇는 구조는 평면을 최소 3개 이상의 영역으로 분할하는 위상학적 삼차로(3-Way Junction)를 형성합니다.',
       };
     }
 
-    // 3. Check Ring (Encloses at least one cell on the board)
-    // Ring test: Flood fill from outside the board through all board cells not in compSet.
-    // Any cell on the board not reached by this outside flood-fill is trapped inside compSet!
-    if (comp.length >= 6) { // Minimum loop length on hex grid is 6
-      const trapped = findEnclosedCells(compSet, boardMeta, size);
-      if (trapped.length > 0) {
-        return {
-          winner: player,
-          winningKeys: comp,
-          winType: 'RING',
-          enclosedKeys: trapped,
-          description: `${player === 1 ? '파랑' : '빨강'} 플레이어가 ${trapped.length}개의 칸을 완전히 포위하는 '고리(Ring/폐곡선)'를 완성했습니다!`,
-          mathInsight:
-            '【요르단 폐곡선 정리(Jordan Curve Theorem)】 평면 위의 닫힌 루프(폐곡선)는 평면을 내부(Interior)와 외부(Exterior)의 두 분리된 연결 성분으로 정확히 이분화합니다.',
-        };
+    // 3. Check Bridge (다리 - 2개 이상의 서로 다른 꼭짓점 연결)
+    const cornersInComp = new Set<number>();
+    for (const key of comp) {
+      const meta = boardMeta.get(key);
+      if (meta && meta.type === 'CORNER' && meta.cornerIndex !== undefined) {
+        cornersInComp.add(meta.cornerIndex);
       }
+    }
+    if (cornersInComp.size >= 2) {
+      const cornerNames = Array.from(cornersInComp).map((idx) => `${idx + 1}번 꼭짓점`).join(', ');
+      return {
+        winner: player,
+        winningKeys: comp,
+        winType: 'BRIDGE',
+        description: `${player === 1 ? '파랑(1P 선공)' : '빨강(2P 후공)'} 플레이어가 서로 다른 모서리(${cornerNames})를 연결하는 【다리(Bridge)】를 완성했습니다!`,
+        mathInsight:
+          '【다리(Bridge)의 위상수학】 6개의 꼭짓점 중 2개 이상을 연결하는 최단 연결망(Spanning path)입니다. 그래프 이론에서 두 단일 소스 간의 위상적 연결 통로를 형성합니다.',
+      };
     }
   }
 

@@ -119,19 +119,6 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
         }}
       >
         <defs>
-          {/* Stone Gradients */}
-          <radialGradient id="havannahP1" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#60a5fa" />
-            <stop offset="60%" stopColor="#2563eb" />
-            <stop offset="100%" stopColor="#1e40af" />
-          </radialGradient>
-
-          <radialGradient id="havannahP2" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#f87171" />
-            <stop offset="60%" stopColor="#dc2626" />
-            <stop offset="100%" stopColor="#991b1b" />
-          </radialGradient>
-
           {/* Golden glow for corners & winning paths */}
           <filter id="cornerGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -179,6 +166,29 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
             strokeWidth = 1.5;
           }
 
+          // When a stone is placed on this cell, tint the hex tile to make player chains instantly distinguishable!
+          if (stone === 1) {
+            if (type === 'CORNER') {
+              cellFill = '#dbeafe';
+              cellStroke = '#2563eb';
+              strokeWidth = 2.4;
+            } else {
+              cellFill = '#eff6ff';
+              cellStroke = '#93c5fd';
+              strokeWidth = 1.6;
+            }
+          } else if (stone === 2) {
+            if (type === 'CORNER') {
+              cellFill = '#fee2e2';
+              cellStroke = '#dc2626';
+              strokeWidth = 2.4;
+            } else {
+              cellFill = '#fff1f2';
+              cellStroke = '#fca5a5';
+              strokeWidth = 1.6;
+            }
+          }
+
           if (isEnclosed) {
             cellFill = '#fde68a'; // Trapped cells inside Ring
             cellStroke = '#f59e0b';
@@ -186,7 +196,7 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
           } else if (isWinningCell) {
             cellFill = '#fef08a';
             cellStroke = '#eab308';
-            strokeWidth = 2.5;
+            strokeWidth = 2.8;
           } else if (isHovered && !stone && !disabled && !winResult) {
             cellFill = currentPlayer === 1 ? '#dbeafe' : '#fee2e2';
           }
@@ -295,71 +305,77 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
                 </g>
               )}
 
-              {/* Placed Stone */}
+              {/* Placed Stone - Clean Solid Colors */}
               {stone && (
                 <g>
-                  {/* Shadow */}
+                  {/* Subtle clean drop shadow */}
                   <circle
-                    cx={cx + 1.2}
-                    cy={cy + 1.8}
-                    r={R * 0.68}
+                    cx={cx}
+                    cy={cy + 1.2}
+                    r={R * 0.76}
                     fill="#0f172a"
-                    opacity="0.22"
+                    opacity="0.18"
                   />
 
-                  {/* Stone */}
+                  {/* Solid Color Stone */}
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={R * 0.68}
-                    fill={stone === 1 ? 'url(#havannahP1)' : 'url(#havannahP2)'}
-                    stroke={isWinningCell ? '#fef08a' : stone === 1 ? '#1d4ed8' : '#b91c1c'}
-                    strokeWidth={isWinningCell ? 3 : 1.5}
-                    filter={isWinningCell ? 'url(#cornerGlow)' : undefined}
+                    r={R * 0.76}
+                    fill={stone === 1 ? '#2563eb' : '#dc2626'}
+                    stroke={
+                      isWinningCell
+                        ? '#fde047'
+                        : stone === 1
+                        ? '#1d4ed8'
+                        : '#b91c1c'
+                    }
+                    strokeWidth={isWinningCell ? 3.5 : 2}
                   />
 
-                  {/* Corner Star on Stone if in corner */}
+                  {/* Corner Golden Accent Badge (if stone placed in corner) */}
                   {type === 'CORNER' && (
-                    <text
-                      x={cx}
-                      y={showCoordinates ? cy - R * 0.26 : cy + R * 0.1}
-                      textAnchor="middle"
-                      fill="#fef08a"
-                      fontSize={R * 0.3}
-                      fontWeight="bold"
-                    >
-                      ★
-                    </text>
+                    <g pointerEvents="none">
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={(R * 0.76) + 2.5}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth="2.5"
+                        strokeDasharray="4 2"
+                      />
+                      {!showMoveNumbers && (
+                        <text
+                          x={cx}
+                          y={cy + R * 0.15}
+                          textAnchor="middle"
+                          fill="#fef08a"
+                          fontSize={R * 0.42}
+                          fontWeight="900"
+                          style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}
+                        >
+                          ★
+                        </text>
+                      )}
+                    </g>
                   )}
 
-                  {/* Move Number or Friendly Coordinate */}
-                  {showMoveNumbers && moveNum ? (
+                  {/* Move Number Overlay */}
+                  {showMoveNumbers && moveNum && (
                     <text
                       x={cx}
                       y={cy + (R * 0.22)}
                       textAnchor="middle"
                       fill="#ffffff"
-                      fontSize={R * 0.42}
-                      fontWeight="700"
-                      pointerEvents="none"
-                      style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
-                    >
-                      {moveNum}
-                    </text>
-                  ) : showCoordinates ? (
-                    <text
-                      x={cx}
-                      y={type === 'CORNER' ? cy + (R * 0.26) : cy + (R * 0.18)}
-                      textAnchor="middle"
-                      fill="#ffffff"
-                      fontSize={R * 0.32}
-                      fontWeight="700"
+                      fontSize={R * 0.44}
+                      fontWeight="800"
                       pointerEvents="none"
                       style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}
                     >
-                      {displayCoord}
+                      {moveNum}
                     </text>
-                  ) : null}
+                  )}
                 </g>
               )}
 
@@ -368,12 +384,12 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
                 <circle
                   cx={cx}
                   cy={cy}
-                  r={R * 0.62}
-                  fill={currentPlayer === 1 ? '#3b82f6' : '#ef4444'}
-                  opacity="0.4"
-                  stroke={currentPlayer === 1 ? '#2563eb' : '#dc2626'}
-                  strokeWidth="1.5"
-                  strokeDasharray="3 3"
+                  r={R * 0.77}
+                  fill={currentPlayer === 1 ? '#38bdf8' : '#fb7185'}
+                  opacity="0.45"
+                  stroke={currentPlayer === 1 ? '#0284c7' : '#e11d48'}
+                  strokeWidth="2"
+                  strokeDasharray="4 2"
                   pointerEvents="none"
                 />
               )}

@@ -427,6 +427,63 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
             {/* Left Column: Game Board & Core Visuals (8 cols on lg) */}
             <div className="lg:col-span-8 flex flex-col gap-3">
+              {/* Victory Alert Banner on Board */}
+              {currentWinResult && (
+                <div className="w-full p-4 rounded-3xl bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-500/15 border-2 border-amber-400 shadow-sm flex items-center justify-between gap-3 flex-wrap animate-in fade-in">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black shadow-md shrink-0 text-xl">
+                      🏆
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className={`text-xs font-black px-2.5 py-0.5 rounded-full ${
+                            currentWinResult.winner === 1 ? 'bg-blue-600 text-white' : 'bg-red-600 text-white'
+                          }`}
+                        >
+                          {currentWinResult.winner === 1 ? '1P 파랑 승리' : '2P 빨강 승리'}
+                        </span>
+
+                        {gameType === 'HAVANNAH' && currentWinResult.winType && (
+                          <span className="text-xs font-black px-3 py-0.5 rounded-full bg-amber-200 text-amber-950 border border-amber-300">
+                            {currentWinResult.winType === 'RING' && '⭕ 완성 조건: 고리 (Ring)'}
+                            {currentWinResult.winType === 'BRIDGE' && '🌉 완성 조건: 다리 (Bridge)'}
+                            {currentWinResult.winType === 'FORK' && '🔱 완성 조건: 포크 (Fork)'}
+                          </span>
+                        )}
+
+                        {gameType === 'HEX' && (
+                          <span className="text-xs font-black px-3 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200">
+                            ⚡ 완성 조건: 대변 연결
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-sm sm:text-base font-black text-slate-900 mt-1">
+                        {currentWinResult.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      id="btn-reopen-victory-modal"
+                      onClick={() => setShowReviewModal(true)}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition-colors cursor-pointer"
+                    >
+                      결과 분석 보기
+                    </button>
+                    <button
+                      id="btn-new-game-from-banner"
+                      onClick={handleResetGame}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white shadow-xs transition-colors cursor-pointer"
+                    >
+                      새 대국
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Game Arena Card */}
               <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col items-center relative overflow-hidden">
                 {/* Header inside Board with Game Name & Quick Rule Summary */}
@@ -505,6 +562,8 @@ export default function App() {
                 showMoveNumbers={showMoveNumbers}
                 showCoordinates={showCoordinates}
                 pieRuleAvailable={pieRuleAvailable}
+                winResult={currentWinResult}
+                onOpenVictoryDetails={() => setShowReviewModal(true)}
                 onSizeChange={handleSizeChange}
                 onDifficultyChange={setAiDifficulty}
                 onAiPlayerChange={(p) => {

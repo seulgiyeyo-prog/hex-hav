@@ -150,20 +150,6 @@ export const HexBoard: React.FC<HexBoardProps> = ({
         }}
       >
         <defs>
-          {/* Blue player stone gradient */}
-          <radialGradient id="hexP1Stone" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#60a5fa" />
-            <stop offset="60%" stopColor="#2563eb" />
-            <stop offset="100%" stopColor="#1d4ed8" />
-          </radialGradient>
-
-          {/* Red player stone gradient */}
-          <radialGradient id="hexP2Stone" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#f87171" />
-            <stop offset="60%" stopColor="#dc2626" />
-            <stop offset="100%" stopColor="#b91c1c" />
-          </radialGradient>
-
           {/* Winning glow filter */}
           <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="3.5" result="blur" />
@@ -338,58 +324,51 @@ export const HexBoard: React.FC<HexBoardProps> = ({
                   </g>
                 )}
 
-                {/* Placed Stone */}
+                {/* Placed Stone - Clean Solid Colors */}
                 {stone && (
                   <g>
-                    {/* Shadow */}
+                    {/* Subtle clean drop shadow */}
                     <circle
-                      cx={cx + 1.2}
-                      cy={cy + 1.8}
-                      r={R * 0.68}
+                      cx={cx}
+                      cy={cy + 1.2}
+                      r={R * 0.76}
                       fill="#0f172a"
-                      opacity="0.22"
+                      opacity="0.18"
                     />
 
-                    {/* Stone Body */}
+                    {/* Solid Color Stone */}
                     <circle
                       cx={cx}
                       cy={cy}
-                      r={R * 0.68}
-                      fill={stone === 1 ? 'url(#hexP1Stone)' : 'url(#hexP2Stone)'}
-                      stroke={isWinningCell ? '#fef08a' : stone === 1 ? '#1d4ed8' : '#b91c1c'}
-                      strokeWidth={isWinningCell ? 3 : 1.5}
+                      r={R * 0.76}
+                      fill={stone === 1 ? '#2563eb' : '#dc2626'}
+                      stroke={
+                        isWinningCell
+                          ? '#fde047'
+                          : stone === 1
+                          ? '#1d4ed8'
+                          : '#b91c1c'
+                      }
+                      strokeWidth={isWinningCell ? 3.5 : 2}
                       filter={isWinningCell ? 'url(#goldGlow)' : undefined}
                       className="transition-transform duration-200"
                     />
 
-                    {/* Move Number or Coordinate Overlay */}
-                    {showMoveNumbers && moveNum ? (
+                    {/* Move Number Overlay */}
+                    {showMoveNumbers && moveNum && (
                       <text
                         x={cx}
                         y={cy + (R * 0.22)}
                         textAnchor="middle"
                         fill="#ffffff"
-                        fontSize={R * 0.42}
-                        fontWeight="700"
-                        pointerEvents="none"
-                        style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
-                      >
-                        {moveNum}
-                      </text>
-                    ) : showCoordinates ? (
-                      <text
-                        x={cx}
-                        y={cy + (R * 0.18)}
-                        textAnchor="middle"
-                        fill="#ffffff"
-                        fontSize={R * 0.34}
-                        fontWeight="700"
+                        fontSize={R * 0.44}
+                        fontWeight="800"
                         pointerEvents="none"
                         style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}
                       >
-                        {String.fromCharCode(65 + c)}{r + 1}
+                        {moveNum}
                       </text>
-                    ) : null}
+                    )}
                   </g>
                 )}
 
@@ -398,12 +377,12 @@ export const HexBoard: React.FC<HexBoardProps> = ({
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={R * 0.62}
-                    fill={currentPlayer === 1 ? '#3b82f6' : '#ef4444'}
-                    opacity="0.4"
-                    stroke={currentPlayer === 1 ? '#2563eb' : '#dc2626'}
-                    strokeWidth="1.5"
-                    strokeDasharray="3 3"
+                    r={R * 0.76}
+                    fill={currentPlayer === 1 ? '#38bdf8' : '#fb7185'}
+                    opacity="0.45"
+                    stroke={currentPlayer === 1 ? '#0284c7' : '#e11d48'}
+                    strokeWidth="2"
+                    strokeDasharray="4 2"
                     pointerEvents="none"
                   />
                 )}
