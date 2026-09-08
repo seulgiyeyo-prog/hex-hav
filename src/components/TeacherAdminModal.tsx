@@ -26,7 +26,8 @@ interface TeacherAdminModalProps {
   onRankingsUpdated?: () => void;
 }
 
-const DEFAULT_PIN = 'teacher1234';
+const MASTER_PIN = '0730';
+const DEFAULT_PIN = '0730';
 const PIN_STORAGE_KEY = 'HEX_HAV_TEACHER_PIN';
 
 export const TeacherAdminModal: React.FC<TeacherAdminModalProps> = ({
@@ -60,7 +61,12 @@ export const TeacherAdminModal: React.FC<TeacherAdminModalProps> = ({
 
   const getStoredPin = (): string => {
     try {
-      return localStorage.getItem(PIN_STORAGE_KEY) || DEFAULT_PIN;
+      const stored = localStorage.getItem(PIN_STORAGE_KEY);
+      // If previously stored was the old default, migrate to 0730
+      if (!stored || stored === 'teacher1234') {
+        return DEFAULT_PIN;
+      }
+      return stored;
     } catch {
       return DEFAULT_PIN;
     }
@@ -71,8 +77,10 @@ export const TeacherAdminModal: React.FC<TeacherAdminModalProps> = ({
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    const actualPin = getStoredPin();
-    if (pinInput.trim() === actualPin.trim()) {
+    const trimmed = pinInput.trim();
+    const actualPin = getStoredPin().trim();
+    // Master password 0730 always succeeds, as well as any custom configured PIN
+    if (trimmed === MASTER_PIN || trimmed === actualPin) {
       setIsAuthenticated(true);
       setPinInput('');
     } else {
@@ -213,8 +221,6 @@ export const TeacherAdminModal: React.FC<TeacherAdminModalProps> = ({
                 </p>
                 <p className="text-slate-600 leading-relaxed">
                   새 차시 수업 시작 전 전체 랭킹을 비우거나, 특정 학생의 기록을 관리할 수 있습니다.
-                  <br />
-                  <span className="font-bold text-purple-700">기본 비밀번호: teacher1234</span> (로그인 후 변경 가능)
                 </p>
               </div>
 
@@ -225,7 +231,7 @@ export const TeacherAdminModal: React.FC<TeacherAdminModalProps> = ({
                     type={showPin ? 'text' : 'password'}
                     value={pinInput}
                     onChange={(e) => setPinInput(e.target.value)}
-                    placeholder="비밀번호 입력 (예: teacher1234)"
+                    placeholder="선생님 비밀번호 입력"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm font-semibold pr-10"
                     autoFocus
                   />
