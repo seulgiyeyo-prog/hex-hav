@@ -1,0 +1,6 @@
+{
+  "name": "슬기로운 수학생활: HEX & Havannah",
+  "description": "수학자가 만든 위상수학 보드게임 HEX와 Havannah를 탐구하고 2인 대전 및 AI와 함께 즐기는 수학 학습 플랫폼",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

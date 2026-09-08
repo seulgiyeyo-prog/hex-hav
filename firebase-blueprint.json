@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "RankingRecord": {
+      "title": "Ranking Record",
+      "description": "A player's victory record in Hex or Havannah",
+      "type": "object",
+      "properties": {
+        "playerName": {
+          "type": "string",
+          "description": "Display name of the victor",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "gameType": {
+          "type": "string",
+          "description": "Game played (HEX or HAVANNAH)",
+          "enum": ["HEX", "HAVANNAH"]
+        },
+        "gameMode": {
+          "type": "string",
+          "description": "Game mode (AI or PVP)",
+          "enum": ["AI", "PVP"]
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "AI difficulty if AI mode",
+          "enum": ["EASY", "NORMAL", "HARD", "MASTER", "NONE"]
+        },
+        "boardSize": {
+          "type": "number",
+          "description": "Size of the board"
+        },
+        "turns": {
+          "type": "number",
+          "description": "Total turns played to win"
+        },
+        "winningPlayer": {
+          "type": "number",
+          "description": "1 (Blue) or 2 (Red)"
+        },
+        "winCondition": {
+          "type": "string",
+          "description": "Win condition type"
+        },
+        "score": {
+          "type": "number",
+          "description": "Calculated score"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp ISO string"
+        }
+      },
+      "required": ["playerName", "gameType", "gameMode", "boardSize", "turns", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/rankings/{rankingId}": {
+      "schema": "RankingRecord",
+      "description": "Global leaderboard rankings for Hex and Havannah games"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidRanking(data) {
+      return data.playerName is string && data.playerName.size() >= 1 && data.playerName.size() <= 30
+        && (data.gameType == 'HEX' || data.gameType == 'HAVANNAH')
+        && (data.gameMode == 'AI' || data.gameMode == 'PVP')
+        && data.boardSize is number && data.boardSize >= 4 && data.boardSize <= 25
+        && data.turns is number && data.turns >= 1 && data.turns <= 500
+        && data.score is number
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    match /rankings/{rankingId} {
+      allow read: if true;
+      allow create: if isValidId(rankingId) && isValidRanking(request.resource.data);
+      allow update, delete: if false;
+    }
+  }
+}
