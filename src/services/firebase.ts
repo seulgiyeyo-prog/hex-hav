@@ -196,6 +196,8 @@ export function subscribeToRankings(
 
     return unsubscribe;
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, collectionPath);
+    console.warn('Failed to initialize rankings listener:', error);
+    if (onError) onError(error);
+    return () => {};
   }
 }
