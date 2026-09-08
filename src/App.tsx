@@ -14,6 +14,7 @@ import { VictoryModal } from './components/VictoryModal';
 import { WinExamplesModal } from './components/WinExamplesModal';
 import { LeaderboardModal } from './components/LeaderboardModal';
 import { LiveLeaderboardCard } from './components/LiveLeaderboardCard';
+import { TeacherAdminModal } from './components/TeacherAdminModal';
 import { testFirestoreConnection, subscribeToRankings } from './services/firebase';
 import { RankingRecord } from './types';
 import { hexKey, checkHexWin, getHexAIMove, getHexHint } from './utils/hexLogic';
@@ -25,7 +26,7 @@ import {
   parseHavannahKey,
 } from './utils/havannahLogic';
 import { sounds } from './utils/audio';
-import { Sparkles, Trophy, HelpCircle, Swords, Info, Eye } from 'lucide-react';
+import { Sparkles, Trophy, HelpCircle, Swords, Info, Eye, ShieldCheck } from 'lucide-react';
 
 export default function App() {
   // Navigation & High-level State
@@ -35,6 +36,7 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [isWinExamplesOpen, setIsWinExamplesOpen] = useState<boolean>(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
+  const [isTeacherAdminOpen, setIsTeacherAdminOpen] = useState<boolean>(false);
   const [submittedRankId, setSubmittedRankId] = useState<string | null>(null);
   const [liveRankings, setLiveRankings] = useState<RankingRecord[]>([]);
   const [isRankingsLoading, setIsRankingsLoading] = useState<boolean>(true);
@@ -596,11 +598,22 @@ export default function App() {
             <span className="text-slate-300">|</span>
             <span>HEX &amp; Havannah Mathematical Strategy Lab</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-slate-600">
-            <span>Designed &amp; Developed by</span>
-            <span className="font-black text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200/90 shadow-2xs">
-              Seulgi Jeong
-            </span>
+          <div className="flex items-center gap-3">
+            <button
+              id="btn-footer-teacher-admin"
+              onClick={() => setIsTeacherAdminOpen(true)}
+              className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-lg border border-purple-200 transition-colors font-semibold cursor-pointer shadow-2xs"
+              title="선생님 랭킹 초기화 및 관리"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+              <span>선생님 관리 (랭킹 초기화)</span>
+            </button>
+            <div className="flex items-center gap-1.5 text-xs text-slate-600">
+              <span>Designed &amp; Developed by</span>
+              <span className="font-black text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200/90 shadow-2xs">
+                Seulgi Jeong
+              </span>
+            </div>
           </div>
         </div>
       </footer>
@@ -646,6 +659,13 @@ export default function App() {
           setIsWinExamplesOpen(false);
           setIsMathView(true);
         }}
+      />
+
+      {/* Teacher Admin Modal from Footer */}
+      <TeacherAdminModal
+        isOpen={isTeacherAdminOpen}
+        onClose={() => setIsTeacherAdminOpen(false)}
+        rankings={liveRankings}
       />
     </div>
   );

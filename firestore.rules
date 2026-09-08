@@ -23,7 +23,8 @@ service cloud.firestore {
     match /rankings/{rankingId} {
       allow read: if true;
       allow create: if isValidId(rankingId) && isValidRanking(request.resource.data);
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isValidId(rankingId);
     }
   }
 }

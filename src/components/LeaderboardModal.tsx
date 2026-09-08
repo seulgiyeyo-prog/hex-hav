@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { GameType, RankingRecord, GameMode } from '../types';
 import { fetchTopRankings } from '../services/firebase';
-import { Trophy, Medal, Flame, X, RefreshCw, Bot, Users, Sparkles, Calendar, Layers } from 'lucide-react';
+import { TeacherAdminModal } from './TeacherAdminModal';
+import { Trophy, Medal, Flame, X, RefreshCw, Bot, Users, Sparkles, Calendar, Layers, ShieldCheck } from 'lucide-react';
 
 interface LeaderboardModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
   const [rankings, setRankings] = useState<RankingRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (defaultGameType) {
@@ -113,14 +115,26 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
               </h2>
             </div>
           </div>
-          <button
-            id="close-leaderboard-btn"
-            onClick={onClose}
-            aria-label="닫기"
-            className="w-10 h-10 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              id="open-teacher-admin-header-btn"
+              onClick={() => setIsTeacherModalOpen(true)}
+              className="px-2.5 sm:px-3 py-2 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
+              title="선생님 랭킹 초기화 및 관리"
+            >
+              <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0" />
+              <span className="hidden sm:inline">선생님 관리 (초기화)</span>
+              <span className="sm:hidden">초기화</span>
+            </button>
+            <button
+              id="close-leaderboard-btn"
+              onClick={onClose}
+              aria-label="닫기"
+              className="w-10 h-10 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Game Switcher & Controls */}
@@ -335,18 +349,36 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
 
         {/* Modal Footer */}
         <div className="p-3 sm:p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <div className="flex items-center gap-1.5 text-slate-500">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>점수 계산: AI 난이도 x 보드 크기 + 최소 턴 수 보너스</span>
+          <div className="flex items-center gap-2">
+            <button
+              id="open-teacher-admin-footer-btn"
+              onClick={() => setIsTeacherModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
+              <span>선생님 관리 (초기화)</span>
+            </button>
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-slate-400">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>AI 난이도 x 보드 크기 + 턴 수 보너스</span>
+            </span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors"
+            className="px-4 py-1.5 rounded-xl font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors cursor-pointer"
           >
             닫기
           </button>
         </div>
       </div>
+
+      {/* Teacher Admin Modal */}
+      <TeacherAdminModal
+        isOpen={isTeacherModalOpen}
+        onClose={() => setIsTeacherModalOpen(false)}
+        rankings={liveRankings && liveRankings.length > 0 ? liveRankings : rankings}
+        onRankingsUpdated={loadRankings}
+      />
     </div>
   );
 };

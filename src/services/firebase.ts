@@ -4,6 +4,8 @@ import {
   collection,
   doc,
   setDoc,
+  deleteDoc,
+  writeBatch,
   getDocs,
   query,
   where,
@@ -201,3 +203,45 @@ export function subscribeToRankings(
     return () => {};
   }
 }
+
+// Delete a single ranking record
+export async function deleteSingleRanking(rankingId: string): Promise<void> {
+  const collectionPath = 'rankings';
+  try {
+    const docRef = doc(db, collectionPath, rankingId);
+    await deleteDoc(docRef);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `${collectionPath}/${rankingId}`);
+  }
+}
+
+// Clear rankings with optional filter (ALL, HEX, or HAVANNAH)
+export async function clearRankings(filterType?: GameType | 'ALL'): Promise<number> {
+  const collectionPath = 'rankings';
+  try {
+    const rankingsRef = collection(db, collectionPath);
+    let q = query(rankingsRef);
+    if (filterType && filterType !== 'ALL') {
+      q = query(rankingsRef, where('gameType', '==', filterType));
+    }
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return 0;
+
+    const batchSize = 400;
+    const docs = snapshot.docs;
+    let deletedCount = 0;
+
+    for (let i = 0; i < docs.length; i += batchSize) {
+      const batch = writeBatch(db);
+      const chunk = docs.slice(i, i + batchSize);
+      chunk.forEach((d) => batch.delete(d.ref));
+      await batch.commit();
+      deletedCount += chunk.length;
+    }
+
+    return deletedCount;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, collectionPath);
+  }
+}
+
