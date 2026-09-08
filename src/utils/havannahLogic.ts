@@ -495,10 +495,12 @@ export function getHavannahHint(
   if (meta?.type === 'CORNER') typeDesc = '핵심 꼭짓점(Corner)';
   else if (meta?.type === 'EDGE') typeDesc = '전략적 변(Edge)';
 
+  const friendlyCoord = formatHavannahKey(bestMove.key, size);
+
   return {
     coordKey: bestMove.key,
     havannahCoord: bestMove,
-    reason: `${bestMove.key} (${typeDesc})는 연결망을 확장하고 링 및 다리 위협을 동시에 가하는 강력한 착수점입니다.`,
+    reason: `${friendlyCoord} (${typeDesc}) 칸은 연결망을 확장하고 링 및 다리 위협을 동시에 가하는 강력한 착수점입니다.`,
     mathConcept: '다중 위협 전술(Fork/Bridge Potential): 상대가 양쪽을 동시에 방어할 수 없는 분기 위협을 형성합니다.',
     threatLevel: 'STRATEGY',
   };

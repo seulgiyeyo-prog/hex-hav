@@ -171,16 +171,16 @@ export const WIN_EXAMPLES: WinExampleItem[] = [
     winResult: {
       winner: 1,
       winningKeys: hexBlueWinningKeys,
-      description: '상단(r=0)에서 하단(r=6)까지 끊김 없는 파란색 연결 경로가 완성되었습니다!',
+      description: '상단 테두리(1행)에서 하단 테두리(7행)까지 끊김 없는 파란색 연결 경로가 완성되었습니다!',
       mathInsight: '평면 그래프에서 횡단 경로는 마주보는 두 경계를 직접 연결하는 단사 사상(injective path)입니다.',
     },
-    summary: '위쪽 파란 경계선(r=0)부터 아래쪽 파란 경계선(r=6)까지 끊김 없이 이어진 경로입니다.',
+    summary: '위쪽 파란 테두리(1행)부터 아래쪽 파란 테두리(7행)까지 끊김 없이 이어진 경로입니다.',
     conditionDescription:
       'HEX에서 파랑(1P)은 보드의 상단(위쪽 파란색 테두리)과 하단(아래쪽 파란색 테두리)을 자신의 돌로 연결해야 합니다. 육각형의 변을 맞댄 이웃 칸들끼리 연속해서 이어져야 유효한 연결로 인정됩니다.',
     rulesChecklist: [
-      { label: '상단 파란 경계(r=0) 접촉', passed: true, note: '(0, 3) 칸이 상단 테두리에 안착' },
-      { label: '하단 파란 경계(r=6) 접촉', passed: true, note: '(6, 2) 칸이 하단 테두리에 안착' },
-      { label: '중간 끊김 없는 연속성', passed: true, note: '모든 돌이 6방향 이웃으로 긴밀히 연결됨' },
+      { label: '상단 파란 테두리(1행) 접촉', passed: true, note: 'D1 칸(위쪽 1행 D열)이 상단 테두리에 안착' },
+      { label: '하단 파란 테두리(7행) 접촉', passed: true, note: 'C7 칸(아래쪽 7행 C열)이 하단 테두리에 안착' },
+      { label: '중간 끊김 없는 연속성', passed: true, note: '모든 돌이 6방향 이웃 칸으로 긴밀히 연결됨' },
       { label: '빨간색 좌우 연결 차단', passed: true, note: '파란 경로가 완성되는 순간 빨강의 횡단은 수학적으로 영원히 불가능해짐' },
     ],
     mathPrinciple: {
@@ -205,15 +205,15 @@ export const WIN_EXAMPLES: WinExampleItem[] = [
     winResult: {
       winner: 2,
       winningKeys: hexRedWinningKeys,
-      description: '좌측(c=0)에서 우측(c=6)까지 빨간색 가로단 연결 경로가 완성되었습니다!',
+      description: '좌측 테두리(A열)에서 우측 테두리(G열)까지 빨간색 가로 연결 경로가 완성되었습니다!',
       mathInsight: '후공 빨강은 선공 파랑의 상하 진출을 대각선 쐐기로 저지하며 자신의 동서 경로를 관통했습니다.',
     },
-    summary: '왼쪽 빨간 경계선(c=0)부터 오른쪽 빨간 경계선(c=6)까지 적의 방어선을 뚫고 횡단한 경로입니다.',
+    summary: '왼쪽 빨간 테두리(A열)부터 오른쪽 빨간 테두리(G열)까지 적의 방어선을 뚫고 횡단한 경로입니다.',
     conditionDescription:
       'HEX에서 빨강(2P)은 보드의 좌측(왼쪽 빨간색 테두리)과 우측(오른쪽 빨간색 테두리)을 연결해야 합니다. 파랑의 세로 길목을 쐐기 형태로 차단하면서 동시에 자신의 가로 연결을 확보하는 것이 전술의 핵심입니다.',
     rulesChecklist: [
-      { label: '좌측 빨간 경계(c=0) 접촉', passed: true, note: '(3, 0) 칸이 좌측 테두리에 안착' },
-      { label: '우측 빨간 경계(c=6) 접촉', passed: true, note: '(2, 6) 칸이 우측 테두리에 안착' },
+      { label: '좌측 빨간 테두리(A열) 접촉', passed: true, note: 'A4 칸(왼쪽 A열 4행)이 좌측 테두리에 안착' },
+      { label: '우측 빨간 테두리(G열) 접촉', passed: true, note: 'G3 칸(오른쪽 G열 3행)이 우측 테두리에 안착' },
       { label: '파란색 상하 경로 단절', passed: true, note: '파랑의 세로 진행을 가로질러 분단시킴' },
     ],
     mathPrinciple: {
@@ -249,8 +249,8 @@ export const WIN_EXAMPLES: WinExampleItem[] = [
     conditionDescription:
       '자신의 돌들이 서로 이웃하여 연결된 닫힌 루프(폐곡선)를 만들어, 그 내부에 최소 1개 이상의 칸을 완전히 고립시키면 즉시 승리합니다. 포위된 칸은 비어있어도 되고, 상대 돌이나 아군 돌이 들어있어도 모두 인정됩니다!',
     rulesChecklist: [
-      { label: '연속된 닫힌 폐곡선', passed: true, note: '6개의 돌이 원형으로 순환 연결됨' },
-      { label: '최소 1개 이상의 내부 칸 격리', passed: true, note: '중앙 (0, 0, 0) 칸이 완벽히 고립됨' },
+      { label: '연속된 닫힌 폐곡선', passed: true, note: '6개의 돌이 원형으로 빈틈없이 순환 연결됨' },
+      { label: '최소 1개 이상의 내부 칸 격리', passed: true, note: '중앙 D4 칸(보드 정중앙)이 내부에 완벽히 고립됨' },
       { label: '보드 경계와의 무관성', passed: true, note: '꼭짓점이나 변에 닿지 않고 보드 내부 어디서나 형성 가능' },
       { label: '최소 필요 돌 수 만족', passed: true, note: '육각 격자에서 고리를 만드는 최소 돌 수는 6개임' },
     ],
@@ -284,9 +284,9 @@ export const WIN_EXAMPLES: WinExampleItem[] = [
     conditionDescription:
       '정육각형 보드에는 6개의 뾰족한 끝점인 꼭짓점(Corner, 보드 위에 ★로 표시)이 있습니다. 이 6개의 꼭짓점 중 어느 것이든 서로 다른 2개 이상을 자신의 돌 사슬로 연결하면 즉시 승리합니다.',
     rulesChecklist: [
-      { label: '첫 번째 꼭짓점(★) 도달', passed: true, note: '모서리 1번 (0, -3, 3) 꼭짓점 점유' },
-      { label: '두 번째 꼭짓점(★) 도달', passed: true, note: '모서리 2번 (-3, 0, 3) 꼭짓점 점유' },
-      { label: '두 꼭짓점 간의 연속 연결', passed: true, note: '하나의 일체형 돌 그룹으로 끊김 없이 결합' },
+      { label: '첫 번째 꼭짓점(★) 도달', passed: true, note: '1번 꼭짓점 A1 칸(★) 점유' },
+      { label: '두 번째 꼭짓점(★) 도달', passed: true, note: '2번 꼭짓점 D1 칸(★) 점유' },
+      { label: '두 꼭짓점 간의 연속 연결', passed: true, note: 'A1과 D1 사이가 하나의 돌 그룹으로 끊김 없이 결합' },
       { label: '거리 무관성', passed: true, note: '인접한 모서리 간의 짧은 다리든, 마주보는 먼 모서리 간의 긴 다리든 동일하게 승리' },
     ],
     mathPrinciple: {
@@ -319,10 +319,10 @@ export const WIN_EXAMPLES: WinExampleItem[] = [
     conditionDescription:
       '보드의 6개 평평한 변(Edge) 중 서로 다른 3개 이상을 하나의 연결된 돌 그룹으로 연결하면 승리합니다. 대개 중앙의 허브(Hub)에서 세 갈래로 가지가 뻗어나가는 Y자 형태를 띱니다. (주의: 꼭짓점은 변에 포함되지 않습니다!)',
     rulesChecklist: [
-      { label: '서로 다른 1번째 변 접촉', passed: true, note: 'Edge 0 (x=3 변) 안착' },
-      { label: '서로 다른 2번째 변 접촉', passed: true, note: 'Edge 2 (y=3 변) 안착' },
-      { label: '서로 다른 3번째 변 접촉', passed: true, note: 'Edge 4 (z=3 변) 안착' },
-      { label: '꼭짓점(★) 미포함 원칙 준수', passed: true, note: '모든 접촉점이 순수한 변(Edge) 칸임' },
+      { label: '서로 다른 1번째 변 접촉', passed: true, note: '1번 변 (우상단 테두리 D7 칸 방면) 안착' },
+      { label: '서로 다른 2번째 변 접촉', passed: true, note: '3번 변 (좌측 테두리 D1 칸 방면) 안착' },
+      { label: '서로 다른 3번째 변 접촉', passed: true, note: '5번 변 (하단 테두리 G4 칸 방면) 안착' },
+      { label: '꼭짓점(★) 미포함 원칙 준수', passed: true, note: '모든 접촉점이 순수한 변(Edge) 칸임 (꼭짓점 제외)' },
     ],
     mathPrinciple: {
       title: '삼원 분기와 스타이너 트리 (Steiner Tree)',
@@ -351,11 +351,11 @@ export const WIN_EXAMPLES: WinExampleItem[] = [
     },
     summary: '열린 루프(C자형)나 꼭짓점 오해 등 실전에서 자주 발생하는 무효 사례입니다.',
     conditionDescription:
-      '이 예시는 승리가 아닙니다! 파랑이 5개의 돌로 고리를 시도했으나, 마지막 6번째 칸(0, -1, 1)에 빨간 돌이 먼저 끼어들어 고리가 닫히지 않았습니다(Open Loop). 이처럼 1칸이라도 열려 있으면 고리로 인정되지 않습니다.',
+      '이 예시는 승리가 아닙니다! 파랑이 5개의 돌로 고리를 시도했으나, 마지막 6번째 칸인 C3 칸에 빨간 돌이 먼저 끼어들어 고리가 닫히지 않았습니다(열린 고리). 이처럼 1칸이라도 열려 있으면 고리로 인정되지 않습니다.',
     rulesChecklist: [
-      { label: '폐곡선 완성 여부', passed: false, note: '마지막 1칸이 끊겨서 열려 있음 (무효)' },
+      { label: '폐곡선 완성 여부', passed: false, note: 'C3 칸이 끊겨서 고리가 열려 있음 (무효)' },
       { label: '꼭짓점은 변이 아님', passed: true, note: '꼭짓점 1개 + 변 2개는 포크가 아님' },
-      { label: '상대의 방어 차단', passed: true, note: '빨간 돌이 분기점을 차단하여 무효화 성공' },
+      { label: '상대의 방어 차단', passed: true, note: '빨간 돌이 C3 칸을 차단하여 무효화 성공' },
     ],
     mathPrinciple: {
       title: '위상적 연결과 완결성',

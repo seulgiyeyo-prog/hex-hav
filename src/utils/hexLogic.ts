@@ -399,7 +399,7 @@ export function getHexHint(
   return {
     coordKey: key,
     hexCoord: bestMove,
-    reason: `(${bestMove.r + 1}행, ${String.fromCharCode(65 + bestMove.c)}열)은 아군의 연결 거리를 단축시키고 상대의 진출을 견제하는 핵심 요충지입니다.`,
+    reason: `${String.fromCharCode(65 + bestMove.c)}${bestMove.r + 1} 칸(${String.fromCharCode(65 + bestMove.c)}열 ${bestMove.r + 1}행)은 아군의 연결 거리를 단축시키고 상대의 진출을 견제하는 핵심 요충지입니다.`,
     mathConcept: '최단 연결 경로 & 섀넌 전위(Dijkstra / Potential Field): 아군의 최단 경로를 축소하고 상대 경로를 우회시킵니다.',
     threatLevel: 'STRATEGY',
   };

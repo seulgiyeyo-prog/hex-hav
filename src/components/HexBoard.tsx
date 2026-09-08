@@ -362,8 +362,8 @@ export const HexBoard: React.FC<HexBoardProps> = ({
                       className="transition-transform duration-200"
                     />
 
-                    {/* Move Number Overlay */}
-                    {showMoveNumbers && moveNum && (
+                    {/* Move Number or Coordinate Overlay */}
+                    {showMoveNumbers && moveNum ? (
                       <text
                         x={cx}
                         y={cy + (R * 0.22)}
@@ -376,7 +376,20 @@ export const HexBoard: React.FC<HexBoardProps> = ({
                       >
                         {moveNum}
                       </text>
-                    )}
+                    ) : showCoordinates ? (
+                      <text
+                        x={cx}
+                        y={cy + (R * 0.18)}
+                        textAnchor="middle"
+                        fill="#ffffff"
+                        fontSize={R * 0.34}
+                        fontWeight="700"
+                        pointerEvents="none"
+                        style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}
+                      >
+                        {String.fromCharCode(65 + c)}{r + 1}
+                      </text>
+                    ) : null}
                   </g>
                 )}
 

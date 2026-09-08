@@ -29,7 +29,7 @@ export const WinExamplesViewer: React.FC<WinExamplesViewerProps> = ({
     return first ? first.id : WIN_EXAMPLES[0].id;
   });
 
-  const [showCoordinates, setShowCoordinates] = useState<boolean>(false);
+  const [showCoordinates, setShowCoordinates] = useState<boolean>(true);
   const [showNumbers, setShowNumbers] = useState<boolean>(false);
 
   // Filter examples for the selected game

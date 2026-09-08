@@ -162,6 +162,8 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
           const isHovered = hoveredKey === key;
           const moveNum = moveNumberMap.get(key);
 
+          const displayCoord = getHavannahDisplayCoord(x, y, boardSize);
+
           // Visual styling per cell role
           let cellFill = '#ffffff';
           let cellStroke = '#cbd5e1';
@@ -320,7 +322,7 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
                   {type === 'CORNER' && (
                     <text
                       x={cx}
-                      y={cy - R * 0.3}
+                      y={showCoordinates ? cy - R * 0.26 : cy + R * 0.1}
                       textAnchor="middle"
                       fill="#fef08a"
                       fontSize={R * 0.3}
@@ -330,8 +332,8 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
                     </text>
                   )}
 
-                  {/* Move Number */}
-                  {showMoveNumbers && moveNum && (
+                  {/* Move Number or Friendly Coordinate */}
+                  {showMoveNumbers && moveNum ? (
                     <text
                       x={cx}
                       y={cy + (R * 0.22)}
@@ -344,7 +346,20 @@ export const HavannahBoard: React.FC<HavannahBoardProps> = ({
                     >
                       {moveNum}
                     </text>
-                  )}
+                  ) : showCoordinates ? (
+                    <text
+                      x={cx}
+                      y={type === 'CORNER' ? cy + (R * 0.26) : cy + (R * 0.18)}
+                      textAnchor="middle"
+                      fill="#ffffff"
+                      fontSize={R * 0.32}
+                      fontWeight="700"
+                      pointerEvents="none"
+                      style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}
+                    >
+                      {displayCoord}
+                    </text>
+                  ) : null}
                 </g>
               )}
 
