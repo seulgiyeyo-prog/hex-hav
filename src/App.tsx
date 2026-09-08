@@ -517,7 +517,6 @@ export default function App() {
                 onToggleMoveNumbers={() => setShowMoveNumbers(!showMoveNumbers)}
                 onToggleCoordinates={() => setShowCoordinates(!showCoordinates)}
                 onApplyPieRule={handleApplyPieRule}
-                onOpenWinExamples={() => setIsWinExamplesOpen(true)}
               />
 
               {/* Classroom Session Stats Card */}

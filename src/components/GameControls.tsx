@@ -2,7 +2,7 @@ import React from 'react';
 import { GameType, GameMode, Player, AIDifficulty, HintAnalysis } from '../types';
 import { HEX_SIZES } from '../utils/hexLogic';
 import { HAVANNAH_SIZES, formatHavannahKey } from '../utils/havannahLogic';
-import { RotateCcw, Lightbulb, RefreshCw, Hash, Compass, ArrowRightLeft, Sparkles, User, Bot, AlertTriangle, Eye } from 'lucide-react';
+import { RotateCcw, Lightbulb, RefreshCw, Hash, Compass, ArrowRightLeft, Sparkles, User, Bot, AlertTriangle } from 'lucide-react';
 
 interface GameControlsProps {
   gameType: GameType;
@@ -27,7 +27,6 @@ interface GameControlsProps {
   onToggleMoveNumbers: () => void;
   onToggleCoordinates: () => void;
   onApplyPieRule: () => void;
-  onOpenWinExamples?: () => void;
 }
 
 export const GameControls: React.FC<GameControlsProps> = ({
@@ -53,7 +52,6 @@ export const GameControls: React.FC<GameControlsProps> = ({
   onToggleMoveNumbers,
   onToggleCoordinates,
   onApplyPieRule,
-  onOpenWinExamples,
 }) => {
   const isP1 = currentPlayer === 1;
   const isAiTurn = gameMode === 'AI' && currentPlayer === aiPlayer;
@@ -119,21 +117,8 @@ export const GameControls: React.FC<GameControlsProps> = ({
           </div>
         </div>
 
-        {/* Quick Actions (Hint, Undo, Reset, Win Examples) */}
+        {/* Quick Actions (Hint, Undo, Reset) */}
         <div className="flex items-center flex-wrap gap-2 shrink-0">
-          {/* Win Examples Button */}
-          {onOpenWinExamples && (
-            <button
-              id="btn-win-examples"
-              onClick={onOpenWinExamples}
-              title="승리 조건 시각적 예시 확인"
-              className="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 flex items-center gap-1.5 whitespace-nowrap transition-colors shadow-2xs shrink-0"
-            >
-              <Eye className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span>승리 예시</span>
-            </button>
-          )}
-
           {/* Hint Button */}
           <button
             id="btn-hint"
